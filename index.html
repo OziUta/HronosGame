@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Таблица Шульте</title>
+    <script src="https://telegram.org/js/telegram-web-app.js"></script>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <!-- Загрузочный экран -->
+    <div id="loadingScreen" class="screen active">
+        <div class="loading-content">
+            <div class="logo">🔢</div>
+            <h1>Таблица Шульте</h1>
+            <div class="loading-bar">
+                <div class="loading-progress"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Главное меню -->
+    <div id="mainMenu" class="screen">
+        <div class="menu-content">
+            <div class="logo">🔢</div>
+            <h1>Таблица Шульте</h1>
+            <div class="menu-buttons">
+                <button class="tg-btn primary" onclick="showScreen('difficultyScreen')">
+                    🎮 Начать игру
+                </button>
+                <button class="tg-btn secondary" onclick="showScreen('aboutScreen')">
+                    ℹ️ Об игре
+                </button>
+                <button class="tg-btn secondary" onclick="showScreen('statsScreen')">
+                    📊 Статистика
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Выбор сложности -->
+    <div id="difficultyScreen" class="screen">
+        <div class="menu-content">
+            <h2>🎯 Выберите сложность</h2>
+            <div class="difficulty-buttons">
+                <button class="difficulty-btn easy" onclick="startGame(4)">
+                    <span class="difficulty-icon">😊</span>
+                    <span class="difficulty-text">Легкая</span>
+                    <span class="difficulty-size">4×4</span>
+                </button>
+                <button class="difficulty-btn medium" onclick="startGame(5)">
+                    <span class="difficulty-icon">😐</span>
+                    <span class="difficulty-text">Средняя</span>
+                    <span class="difficulty-size">5×5</span>
+                </button>
+                <button class="difficulty-btn hard" onclick="startGame(6)">
+                    <span class="difficulty-icon">😰</span>
+                    <span class="difficulty-text">Сложная</span>
+                    <span class="difficulty-size">6×6</span>
+                </button>
+                <button class="difficulty-btn expert" onclick="startGame(7)">
+                    <span class="difficulty-icon">🤯</span>
+                    <span class="difficulty-text">Эксперт</span>
+                    <span class="difficulty-size">7×7</span>
+                </button>
+            </div>
+            <button class="tg-btn back" onclick="showScreen('mainMenu')">← Назад</button>
+        </div>
+    </div>
+
+    <!-- Игровой экран -->
+    <div id="gameScreen" class="screen">
+        <div class="game-header">
+            <div class="game-info">
+                <div class="info-item">
+                    <span class="info-label">Найдите:</span>
+                    <span id="currentNum" class="info-value">1</span>
+                </div>
+                <div class="info-item">
+                    <span class="info-label">Время:</span>
+                    <span id="timer" class="info-value">0с</span>
+                </div>
+                <div class="info-item">
+                    <span class="info-label">Ошибки:</span>
+                    <span id="errors" class="info-value">0</span>
+                </div>
+            </div>
+            <button class="exit-btn" onclick="endGame()">⏹️</button>
+        </div>
+        <div id="gameBoard" class="game-board"></div>
+    </div>
+
+    <!-- Экран результатов -->
+    <div id="resultsScreen" class="screen">
+        <div class="menu-content">
+            <div class="result-icon">🏆</div>
+            <h2>Результаты</h2>
+            <div class="stats-grid">
+                <div class="stat-item">
+                    <span class="stat-label">Время:</span>
+                    <span id="finalTime" class="stat-value">0с</span>
+                </div>
+                <div class="stat-item">
+                    <span class="stat-label">Среднее время:</span>
+                    <span id="avgTime" class="stat-value">0с</span>
+                </div>
+                <div class="stat-item">
+                    <span class="stat-label">Ошибки:</span>
+                    <span id="errorsCount" class="stat-value">0</span>
+                </div>
+            </div>
+            <div class="results-buttons">
+                <button class="tg-btn primary" onclick="showScreen('mainMenu')">
+                    🏠 В меню
+                </button>
+                <button class="tg-btn secondary" onclick="showScreen('difficultyScreen')">
+                    🔄 Играть ещё
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Об игре -->
+    <div id="aboutScreen" class="screen">
+        <div class="menu-content">
+            <h2>ℹ️ Об игре</h2>
+            <div class="about-content">
+                <div class="about-section">
+                    <h3>🎯 Что это?</h3>
+                    <p>Таблица Шульте - упражнение для развития периферического зрения, скорости чтения и внимания.</p>
+                </div>
+                <div class="about-section">
+                    <h3>📝 Как играть?</h3>
+                    <p>Найдите и нажимайте числа в порядке возрастания от 1 до N как можно быстрее.</p>
+                </div>
+                <div class="about-section">
+                    <h3>💡 Польза</h3>
+                    <p>Улучшает концентрацию, расширяет поле зрения и увеличивает скорость восприятия информации.</p>
+                </div>
+            </div>
+            <button class="tg-btn back" onclick="showScreen('mainMenu')">← Назад</button>
+        </div>
+    </div>
+
+    <!-- Статистика -->
+    <div id="statsScreen" class="screen">
+        <div class="menu-content">
+            <h2>📊 Статистика</h2>
+            <div id="statsContent" class="stats-content">
+                <div class="no-stats">
+                    <div class="no-stats-icon">📈</div>
+                    <p>Статистика будет доступна после первых игр</p>
+                </div>
+            </div>
+            <button class="tg-btn back" onclick="showScreen('mainMenu')">← Назад</button>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
