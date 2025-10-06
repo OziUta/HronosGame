@@ -186,11 +186,12 @@ body {
     padding: 12px var(--spacing);
     background: var(--tg-theme-secondary-bg-color);
     border-bottom: 1px solid var(--tg-theme-hint-color);
+    min-height: 60px;
 }
 
 .game-info {
     display: flex;
-    gap: 20px;
+    gap: 15px;
     flex: 1;
 }
 
@@ -201,13 +202,13 @@ body {
 }
 
 .info-label {
-    font-size: 12px;
+    font-size: 11px;
     color: var(--tg-theme-hint-color);
-    margin-bottom: 4px;
+    margin-bottom: 2px;
 }
 
 .info-value {
-    font-size: 16px;
+    font-size: 14px;
     font-weight: 600;
     color: var(--tg-theme-text-color);
 }
@@ -219,17 +220,28 @@ body {
     cursor: pointer;
     padding: 8px;
     color: var(--tg-theme-text-color);
+    min-width: 40px;
 }
 
-/* Игровое поле */
-.game-board {
+/* Контейнер игрового поля */
+.game-container {
     flex: 1;
-    display: grid;
-    gap: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
     padding: var(--spacing);
-    max-width: 500px;
+    overflow: hidden;
+}
+
+/* Игровое поле с фиксированными размерами */
+.game-board {
+    display: grid;
+    gap: 6px;
+    width: min(95vw, 95vh - 100px);
+    height: min(95vw, 95vh - 100px);
+    max-width: 400px;
+    max-height: 400px;
     margin: 0 auto;
-    width: 100%;
 }
 
 .cell {
@@ -237,13 +249,12 @@ body {
     align-items: center;
     justify-content: center;
     background: var(--tg-theme-secondary-bg-color);
-    border-radius: 8px;
-    font-size: 1.1rem;
+    border-radius: 6px;
+    font-size: 1rem;
     font-weight: 600;
     cursor: pointer;
     transition: var(--transition);
     color: var(--tg-theme-text-color);
-    aspect-ratio: 1;
     user-select: none;
     -webkit-user-select: none;
 }
@@ -349,7 +360,7 @@ body {
     }
     
     .game-info {
-        gap: 12px;
+        gap: 10px;
     }
     
     .info-label {
@@ -357,11 +368,23 @@ body {
     }
     
     .info-value {
-        font-size: 14px;
+        font-size: 12px;
     }
     
     .cell {
-        font-size: 1rem;
+        font-size: 0.9rem;
+    }
+    
+    .game-board {
+        gap: 4px;
+    }
+}
+
+/* Для очень высоких экранов */
+@media (min-height: 800px) {
+    .game-board {
+        max-width: 450px;
+        max-height: 450px;
     }
 }
 
@@ -380,4 +403,9 @@ body {
 
 .game-board.size-7 {
     grid-template-columns: repeat(7, 1fr);
+    gap: 4px;
+}
+
+.game-board.size-7 .cell {
+    font-size: 0.9rem;
 }
