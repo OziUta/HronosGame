@@ -98,17 +98,13 @@ function showScreen(screenId) {
 
 // Обработка кнопки назад
 function handleBackButton() {
-    const screens = {
-        'difficultyScreen': 'mainMenu',
-        'aboutScreen': 'mainMenu',
-        'statsScreen': 'mainMenu',
-        'resultsScreen': 'mainMenu'
-    };
-    
-    if (screens[currentScreen]) {
-        showScreen(screens[currentScreen]);
-    } else if (currentScreen === 'gameScreen') {
-        endGame();
+    if (currentScreen === 'gameScreen') {
+        handleExitButton();
+    } else if (currentScreen === 'difficultyScreen' || 
+               currentScreen === 'aboutScreen' || 
+               currentScreen === 'statsScreen' ||
+               currentScreen === 'resultsScreen') {
+        showScreen('mainMenu');
     }
 }
 
@@ -176,7 +172,7 @@ function handleCellClick(number, cell) {
         
         // Проверка завершения игры
         if (gameState.currentNumber > gameState.size * gameState.size) {
-            endGame();
+            setTimeout(() => endGame(), 300);
         }
         
         setTimeout(() => cell.classList.remove('correct'), 300);
@@ -223,7 +219,23 @@ function endGame() {
     // Отправка данных в Telegram
     sendGameDataToTelegram(endTime);
     
+    // Показываем экран результатов
     showScreen('resultsScreen');
+    
+    // Вибрация успеха
+    tg.HapticFeedback.notificationOccurred('success');
+}
+
+// Обработка выхода из игры
+function handleExitButton() {
+    tg.showConfirm('Вы уверены, что хотите выйти? Текущий прогресс будет потерян.', (confirmed) => {
+        if (confirmed) {
+            if (gameState.timer) {
+                clearInterval(gameState.timer);
+            }
+            showScreen('mainMenu');
+        }
+    });
 }
 
 // Обновление статистики
@@ -309,7 +321,7 @@ function updateStatsDisplay() {
     statsContent.innerHTML = html;
 }
 
-// Закрытие приложения
+// Закрытие приложения (оставлено на случай необходимости)
 function closeApp() {
     tg.close();
 }
