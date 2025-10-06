@@ -22,7 +22,7 @@
     <!-- Главное меню -->
     <div id="mainMenu" class="screen">
         <div class="menu-content">
-            <div class="logo">🔢</div>
+            <div class="logo"></div>
             <h1>Таблица Шульте</h1>
             <div class="menu-buttons">
                 <button class="tg-btn primary" onclick="showScreen('difficultyScreen')">
@@ -85,9 +85,11 @@
                     <span id="errors" class="info-value">0</span>
                 </div>
             </div>
-            <button class="exit-btn" onclick="endGame()">⏹️</button>
+            <button class="exit-btn" onclick="handleExitButton()">⏹️</button>
         </div>
-        <div id="gameBoard" class="game-board"></div>
+        <div class="game-container">
+            <div id="gameBoard" class="game-board"></div>
+        </div>
     </div>
 
     <!-- Экран результатов -->
