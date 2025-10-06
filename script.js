@@ -47,7 +47,7 @@ function updateTheme() {
 
 // Обработка изменения viewport
 function handleViewportChange() {
-    console.log('Viewport changed:', tg.viewportHeight);
+    // Можно добавить адаптацию под изменение размера
 }
 
 // Инициализация при загрузке
@@ -75,8 +75,6 @@ function simulateLoading() {
 
 // Переключение экранов
 function showScreen(screenId) {
-    console.log('Switching to screen:', screenId);
-    
     document.getElementById(currentScreen).classList.remove('active');
     document.getElementById(screenId).classList.add('active');
     currentScreen = screenId;
@@ -93,15 +91,10 @@ function showScreen(screenId) {
     if (screenId === 'statsScreen') {
         updateStatsDisplay();
     }
-    
-    // Тактильная отдача
-    tg.HapticFeedback.impactOccurred('soft');
 }
 
 // Обработка кнопки назад
 function handleBackButton() {
-    console.log('Back button pressed on screen:', currentScreen);
-    
     if (currentScreen === 'gameScreen') {
         handleExitButton();
     } else if (currentScreen === 'difficultyScreen' || 
@@ -114,8 +107,6 @@ function handleBackButton() {
 
 // Начало игры
 function startGame(size) {
-    console.log('Starting game with size:', size);
-    
     gameState = {
         size: size,
         currentNumber: 1,
@@ -128,7 +119,6 @@ function startGame(size) {
     createGameBoard(size);
     showScreen('gameScreen');
     startTimer();
-    tg.HapticFeedback.impactOccurred('light');
 }
 
 // Генерация чисел
@@ -174,11 +164,9 @@ function handleCellClick(number, cell) {
         cell.classList.add('correct');
         gameState.currentNumber++;
         document.getElementById('currentNum').textContent = gameState.currentNumber;
-        tg.HapticFeedback.impactOccurred('rigid');
         
         // Проверка завершения игры
         if (gameState.currentNumber > gameState.size * gameState.size) {
-            console.log('Game completed!');
             setTimeout(() => endGame(), 300);
         }
         
@@ -188,7 +176,6 @@ function handleCellClick(number, cell) {
         cell.classList.add('wrong');
         gameState.errors++;
         document.getElementById('errors').textContent = gameState.errors;
-        tg.HapticFeedback.impactOccurred('heavy');
         setTimeout(() => cell.classList.remove('wrong'), 500);
     }
 }
@@ -207,8 +194,6 @@ function updateTimer() {
 
 // Завершение игры
 function endGame() {
-    console.log('Ending game...');
-    
     if (gameState.timer) {
         clearInterval(gameState.timer);
         gameState.timer = null;
@@ -218,8 +203,6 @@ function endGame() {
     const totalNumbers = gameState.size * gameState.size;
     const avgTime = (endTime / totalNumbers).toFixed(2);
     
-    console.log('Game stats:', { endTime, avgTime, errors: gameState.errors });
-    
     // Сохранение статистики
     updateStatistics(endTime, gameState.size);
     
@@ -228,28 +211,22 @@ function endGame() {
     document.getElementById('avgTime').textContent = `${avgTime}с`;
     document.getElementById('errorsCount').textContent = gameState.errors;
     
-    // Отправка данных в Telegram
-    sendGameDataToTelegram(endTime);
+    // ВАЖНО: НЕ отправляем данные в Telegram, чтобы приложение не закрывалось
+    // sendGameDataToTelegram(endTime);
     
     // Показываем экран результатов
     showScreen('resultsScreen');
-    
-    // Вибрация успеха
-    tg.HapticFeedback.notificationOccurred('success');
 }
 
 // Обработка выхода из игры
 function handleExitButton() {
-    tg.showConfirm('Вы уверены, что хотите выйти? Текущий прогресс будет потерян.', (confirmed) => {
-        if (confirmed) {
-            console.log('User confirmed exit from game');
-            if (gameState.timer) {
-                clearInterval(gameState.timer);
-                gameState.timer = null;
-            }
-            showScreen('mainMenu');
+    if (confirm('Вы уверены, что хотите выйти? Текущий прогресс будет потерян.')) {
+        if (gameState.timer) {
+            clearInterval(gameState.timer);
+            gameState.timer = null;
         }
-    });
+        showScreen('mainMenu');
+    }
 }
 
 // Обновление статистики
@@ -264,7 +241,6 @@ function updateStatistics(time, size) {
     }
     
     localStorage.setItem('schulteStats', JSON.stringify(statistics));
-    console.log('Statistics updated:', statistics);
 }
 
 // Получение названия сложности
@@ -273,8 +249,10 @@ function getDifficultyName(size) {
     return sizes[size];
 }
 
-// Отправка данных в Telegram
+// Функция отправки данных в Telegram (ЗАКОММЕНТИРОВАНА)
 function sendGameDataToTelegram(time) {
+    // ЗАКОММЕНТИРОВАНО: отправка данных закрывает приложение
+    /*
     if (tg.initDataUnsafe.user) {
         const gameData = {
             action: 'game_completed',
@@ -284,9 +262,9 @@ function sendGameDataToTelegram(time) {
             difficulty: getDifficultyName(gameState.size)
         };
         
-        console.log('Sending data to Telegram:', gameData);
         tg.sendData(JSON.stringify(gameData));
     }
+    */
 }
 
 // Обновление отображения статистики
@@ -335,11 +313,4 @@ function updateStatsDisplay() {
     
     html += `</div>`;
     statsContent.innerHTML = html;
-}
-
-// Убедитесь, что функция closeApp НИГДЕ не вызывается автоматически
-// Она оставлена только для ручного закрытия, если понадобится
-function closeApp() {
-    console.log('Manual app close requested');
-    tg.close();
 }
