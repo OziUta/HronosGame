@@ -75,6 +75,8 @@ function simulateLoading() {
 
 // Переключение экранов
 function showScreen(screenId) {
+    console.log('Switching to screen:', screenId);
+    
     document.getElementById(currentScreen).classList.remove('active');
     document.getElementById(screenId).classList.add('active');
     currentScreen = screenId;
@@ -98,6 +100,8 @@ function showScreen(screenId) {
 
 // Обработка кнопки назад
 function handleBackButton() {
+    console.log('Back button pressed on screen:', currentScreen);
+    
     if (currentScreen === 'gameScreen') {
         handleExitButton();
     } else if (currentScreen === 'difficultyScreen' || 
@@ -110,6 +114,8 @@ function handleBackButton() {
 
 // Начало игры
 function startGame(size) {
+    console.log('Starting game with size:', size);
+    
     gameState = {
         size: size,
         currentNumber: 1,
@@ -172,6 +178,7 @@ function handleCellClick(number, cell) {
         
         // Проверка завершения игры
         if (gameState.currentNumber > gameState.size * gameState.size) {
+            console.log('Game completed!');
             setTimeout(() => endGame(), 300);
         }
         
@@ -200,13 +207,18 @@ function updateTimer() {
 
 // Завершение игры
 function endGame() {
+    console.log('Ending game...');
+    
     if (gameState.timer) {
         clearInterval(gameState.timer);
+        gameState.timer = null;
     }
     
     const endTime = Math.floor((Date.now() - gameState.startTime) / 1000);
     const totalNumbers = gameState.size * gameState.size;
     const avgTime = (endTime / totalNumbers).toFixed(2);
+    
+    console.log('Game stats:', { endTime, avgTime, errors: gameState.errors });
     
     // Сохранение статистики
     updateStatistics(endTime, gameState.size);
@@ -230,8 +242,10 @@ function endGame() {
 function handleExitButton() {
     tg.showConfirm('Вы уверены, что хотите выйти? Текущий прогресс будет потерян.', (confirmed) => {
         if (confirmed) {
+            console.log('User confirmed exit from game');
             if (gameState.timer) {
                 clearInterval(gameState.timer);
+                gameState.timer = null;
             }
             showScreen('mainMenu');
         }
@@ -250,6 +264,7 @@ function updateStatistics(time, size) {
     }
     
     localStorage.setItem('schulteStats', JSON.stringify(statistics));
+    console.log('Statistics updated:', statistics);
 }
 
 // Получение названия сложности
@@ -269,6 +284,7 @@ function sendGameDataToTelegram(time) {
             difficulty: getDifficultyName(gameState.size)
         };
         
+        console.log('Sending data to Telegram:', gameData);
         tg.sendData(JSON.stringify(gameData));
     }
 }
@@ -321,7 +337,9 @@ function updateStatsDisplay() {
     statsContent.innerHTML = html;
 }
 
-// Закрытие приложения (оставлено на случай необходимости)
+// Убедитесь, что функция closeApp НИГДЕ не вызывается автоматически
+// Она оставлена только для ручного закрытия, если понадобится
 function closeApp() {
+    console.log('Manual app close requested');
     tg.close();
 }
